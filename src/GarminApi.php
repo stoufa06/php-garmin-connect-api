@@ -94,7 +94,6 @@ class GarminApi extends Server
         $client = $this->createHttpClient();
 
         $headers = $this->getHeaders($temporaryCredentials, 'POST', $uri, $bodyParameters);
-        //log_message('debug', 'getTokenCredentials :'.print_r($headers, true));
         try {
             $response = $client->post($uri, [
                 'headers' => $headers,
@@ -135,23 +134,18 @@ class GarminApi extends Server
         $query = http_build_query($params);
         $query = 'activities?'.$query;
         $headers = $this->getHeaders($tokenCredentials, 'GET', self::USER_API_URL . $query);
-        //log_message('debug', print_r(date('r'), true));
-        $dateTime = new \DateTime();
 
-        //log_message('debug', print_r(date('r', $dateTime->format('U')), true));
-        //log_message('debug', print_r($headers, true));
         try {
             $response = $client->get(self::USER_API_URL . $query, [
                 'headers' => $headers,
-                //'debug' => fopen(APPPATH.'logs/garmin.log', 'a+')
             ]);
         } catch (BadResponseException $e) {
             $response = $e->getResponse();
             $body = $response->getBody();
             $statusCode = $response->getStatusCode();
-            //$headers = $response->getHeaders();
+
             throw new \Exception(
-                "Received error [$body] with status code [$statusCode] when retrieving activity summary."//.print_r($headers, true)
+                "Received error [$body] with status code [$statusCode] when retrieving activity summary."
             );
         }
         return $response->getBody()->getContents();
@@ -163,27 +157,48 @@ class GarminApi extends Server
         $query = http_build_query($params);
         $query = 'manuallyUpdatedActivities?'.$query;
         $headers = $this->getHeaders($tokenCredentials, 'GET', self::USER_API_URL . $query);
-        //log_message('debug', print_r(date('r'), true));
-        $dateTime = new \DateTime();
 
-        //log_message('debug', print_r(date('r', $dateTime->format('U')), true));
-        //log_message('debug', print_r($headers, true));
         try {
             $response = $client->get(self::USER_API_URL . $query, [
                 'headers' => $headers,
-                //'debug' => fopen(APPPATH.'logs/garmin.log', 'a+')
             ]);
         } catch (BadResponseException $e) {
             $response = $e->getResponse();
             $body = $response->getBody();
             $statusCode = $response->getStatusCode();
-            //$headers = $response->getHeaders();
             throw new \Exception(
-                "Received error [$body] with status code [$statusCode] when retrieving activity summary.".print_r($headers, true)
+                "Received error [$body] with status code [$statusCode] when retrieving activity summary."
             );
         }
         return $response->getBody()->getContents();
     }
+
+    public function backfillActivitySummary(TokenCredentials $tokenCredentials, $params)
+    {
+        $client = $this->createHttpClient();
+        $query = http_build_query($params);
+        $query = 'backfill/activities?'.$query;
+        $headers = $this->getHeaders($tokenCredentials, 'GET', self::USER_API_URL . $query);
+
+        try {
+            $response = $client->get(self::USER_API_URL . $query, [
+                'headers' => $headers,
+            ]);
+        } catch (BadResponseException $e) {
+            $response = $e->getResponse();
+            $body = $response->getBody();
+            $statusCode = $response->getStatusCode();
+
+            throw new \Exception(
+                "Received error [$body] with status code [$statusCode] when retrieving activity summary."
+            );
+        }
+        return $response->getBody()->getContents();
+    }
+
+
+    
+    
 
     public function urlUserDetails()
     {

@@ -128,7 +128,7 @@ class GarminApi extends Server
         return $this->normalizeProtocolParameters($parameters);
     }
 
-    public function getActivitySummary(TokenCredentials $tokenCredentials, $params)
+    public function getActivitySummary(TokenCredentials $tokenCredentials, array $params)
     {
         $client = $this->createHttpClient();
         $query = http_build_query($params);
@@ -151,7 +151,7 @@ class GarminApi extends Server
         return $response->getBody()->getContents();
     }
 
-    public function getManuallyActivitySummary(TokenCredentials $tokenCredentials, $params)
+    public function getManuallyActivitySummary(TokenCredentials $tokenCredentials, array $params)
     {
         $client = $this->createHttpClient();
         $query = http_build_query($params);
@@ -167,17 +167,16 @@ class GarminApi extends Server
             $body = $response->getBody();
             $statusCode = $response->getStatusCode();
             throw new \Exception(
-                "Received error [$body] with status code [$statusCode] when retrieving activity summary."
+                "Received error [$body] with status code [$statusCode] when retrieving manually activity summary."
             );
         }
         return $response->getBody()->getContents();
     }
 
-    public function backfillActivitySummary(TokenCredentials $tokenCredentials, $params)
-    {
+    public function backfill(TokenCredentials $tokenCredentials, string $uri, array $params) {
         $client = $this->createHttpClient();
         $query = http_build_query($params);
-        $query = 'backfill/activities?'.$query;
+        $query = 'backfill/'.$uri.'?'.$query;
         $headers = $this->getHeaders($tokenCredentials, 'GET', self::USER_API_URL . $query);
 
         try {
@@ -190,19 +189,67 @@ class GarminApi extends Server
             $statusCode = $response->getStatusCode();
 
             throw new \Exception(
-                "Received error [$body] with status code [$statusCode] when retrieving activity summary."
+                "Received error [$body] with status code [$statusCode] when requesting historic $uri summary."
             );
         }
         return $response->getBody()->getContents();
     }
 
+    public function backfillActivitySummary(TokenCredentials $tokenCredentials, array $params)
+    {
+        return $this->backfill($tokenCredentials, 'activities', $params);
+    }
 
-    
+    public function backfillDailySummary(TokenCredentials $tokenCredentials, array $params)
+    {
+        return $this->backfill($tokenCredentials, 'dailies', $params);
+    }
+
+    public function backfillEpochSummary(TokenCredentials $tokenCredentials, array $params)
+    {
+        return $this->backfill($tokenCredentials, 'epochs', $params);
+    }
+    public function backfillActivityDetailsSummary(TokenCredentials $tokenCredentials, array $params)
+    {
+        return $this->backfill($tokenCredentials, 'activityDetails', $params);
+    }
+
+    public function backfillSleepSummary(TokenCredentials $tokenCredentials, array $params)
+    {
+        return $this->backfill($tokenCredentials, 'sleep', $params);
+    }
+
+    public function backfillBodyCompositionSummary(TokenCredentials $tokenCredentials, array $params)
+    {
+        return $this->backfill($tokenCredentials, 'bodyComps', $params);
+    }
+
+    public function backfillStressDetailsSummary(TokenCredentials $tokenCredentials, array $params)
+    {
+        return $this->backfill($tokenCredentials, 'stressDetails', $params);
+    }
+
+    public function backfillUserMetricsSummary(TokenCredentials $tokenCredentials, array $params)
+    {
+        return $this->backfill($tokenCredentials, 'userMetrics', $params);
+    }
+
+    public function backfillPulseOxSummary(TokenCredentials $tokenCredentials, array $params)
+    {
+        return $this->backfill($tokenCredentials, 'pulseOx', $params);
+    }
+
+    public function backfillRespirationSummary(TokenCredentials $tokenCredentials, array $params)
+    {
+        return $this->backfill($tokenCredentials, 'respiration', $params);
+    }
+
+
     
 
     public function urlUserDetails()
     {
-        return self::API_URL . 'userInfo';
+        return self::USER_API_URL . 'user/id';
     }
 
     public function userDetails($data, TokenCredentials $tokenCredentials)
@@ -219,7 +266,7 @@ class GarminApi extends Server
 
     public function userUid($data, TokenCredentials $tokenCredentials)
     {
-        
+        return $data['userId'];
     }
 
     public function userEmail($data, TokenCredentials $tokenCredentials)

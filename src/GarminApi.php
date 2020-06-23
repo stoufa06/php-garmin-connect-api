@@ -244,6 +244,27 @@ class GarminApi extends Server
         return $this->backfill($tokenCredentials, 'respiration', $params);
     }
 
+    public function deleteUserAccessToken(TokenCredentials $tokenCredentials) {
+        $uri = 'user/registration';
+        $client = $this->createHttpClient();
+        $headers = $this->getHeaders($tokenCredentials, 'DELETE', self::USER_API_URL . $uri);
+
+        try {
+            $response = $client->get(self::USER_API_URL . $uri, [
+                'headers' => $headers,
+            ]);
+        } catch (BadResponseException $e) {
+            $response = $e->getResponse();
+            $body = $response->getBody();
+            $statusCode = $response->getStatusCode();
+
+            throw new \Exception(
+                "Received error [$body] with status code [$statusCode] when deleting user access token."
+            );
+        }
+        return true;
+    }
+
 
     
 

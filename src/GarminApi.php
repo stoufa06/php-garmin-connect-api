@@ -250,7 +250,7 @@ class GarminApi extends Server
         $headers = $this->getHeaders($tokenCredentials, 'DELETE', self::USER_API_URL . $uri);
 
         try {
-            $response = $client->get(self::USER_API_URL . $uri, [
+            $response = $client->delete(self::USER_API_URL . $uri, [
                 'headers' => $headers,
             ]);
         } catch (BadResponseException $e) {

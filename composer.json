@@ -2,9 +2,9 @@
     "name": "stoufa06/php-garmin-connect-api",
     "description": "PHP library to connect and use garmin wellness api",
     "type": "library",
-    "version": "1.5",
+    "version": "1.6",
     "require": {
-        "league/oauth1-client": "*"
+        "league/oauth1-client": "1.7"
     },
     "license": "MIT",
     "authors": [

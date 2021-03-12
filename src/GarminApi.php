@@ -1,6 +1,8 @@
 <?php
 namespace Stoufa\GarminApi;
 
+use DateTime;
+use DateTimeZone;
 use League\OAuth1\Client\Server\Server;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\GuzzleException;
@@ -150,6 +152,25 @@ class GarminApi extends Server
     }
 
     /**
+     * Get the base protocol parameters for an OAuth request.
+     * Each request builds on these parameters.
+     *
+     * @see OAuth 1.0 RFC 5849 Section 3.1
+     */
+    protected function baseProtocolParameters(): array
+    {
+        $dateTime = new DateTime('now', new DateTimeZone('UTC'));
+
+        return [
+            'oauth_consumer_key' => $this->clientCredentials->getIdentifier(),
+            'oauth_nonce' => $this->nonce(),
+            'oauth_signature_method' => $this->signature->method(),
+            'oauth_timestamp' => $dateTime->format('U'),
+            'oauth_version' => '1.0',
+        ];
+    }
+
+    /**
      * Get activity summary
      *
      * @param TokenCredentials $tokenCredentials
@@ -294,7 +315,7 @@ class GarminApi extends Server
      */
     public function backfillDailySummary(TokenCredentials $tokenCredentials, array $params): void
     {
-        return $this->backfill($tokenCredentials, 'dailies', $params);
+        $this->backfill($tokenCredentials, 'dailies', $params);
     }
 
     /**
@@ -307,7 +328,7 @@ class GarminApi extends Server
      */
     public function backfillEpochSummary(TokenCredentials $tokenCredentials, array $params): void
     {
-        return $this->backfill($tokenCredentials, 'epochs', $params);
+        $this->backfill($tokenCredentials, 'epochs', $params);
     }
 
     /**
@@ -320,7 +341,7 @@ class GarminApi extends Server
      */
     public function backfillActivityDetailsSummary(TokenCredentials $tokenCredentials, array $params): void
     {
-        return $this->backfill($tokenCredentials, 'activityDetails', $params);
+        $this->backfill($tokenCredentials, 'activityDetails', $params);
     }
 
     /**
@@ -333,7 +354,7 @@ class GarminApi extends Server
      */
     public function backfillSleepSummary(TokenCredentials $tokenCredentials, array $params): void
     {
-        return $this->backfill($tokenCredentials, 'sleep', $params);
+        $this->backfill($tokenCredentials, 'sleep', $params);
     }
 
     /**
@@ -346,7 +367,7 @@ class GarminApi extends Server
      */
     public function backfillBodyCompositionSummary(TokenCredentials $tokenCredentials, array $params): void
     {
-        return $this->backfill($tokenCredentials, 'bodyComps', $params);
+        $this->backfill($tokenCredentials, 'bodyComps', $params);
     }
 
 
@@ -360,7 +381,7 @@ class GarminApi extends Server
      */
     public function backfillStressDetailsSummary(TokenCredentials $tokenCredentials, array $params): void
     {
-        return $this->backfill($tokenCredentials, 'stressDetails', $params);
+        $this->backfill($tokenCredentials, 'stressDetails', $params);
     }
 
 
@@ -374,7 +395,7 @@ class GarminApi extends Server
      */
     public function backfillUserMetricsSummary(TokenCredentials $tokenCredentials, array $params): void
     {
-        return $this->backfill($tokenCredentials, 'userMetrics', $params);
+        $this->backfill($tokenCredentials, 'userMetrics', $params);
     }
 
     /**
@@ -387,7 +408,7 @@ class GarminApi extends Server
      */
     public function backfillPulseOxSummary(TokenCredentials $tokenCredentials, array $params): void
     {
-        return $this->backfill($tokenCredentials, 'pulseOx', $params);
+        $this->backfill($tokenCredentials, 'pulseOx', $params);
     }
 
     /**
@@ -400,7 +421,7 @@ class GarminApi extends Server
      */
     public function backfillRespirationSummary(TokenCredentials $tokenCredentials, array $params): void
     {
-        return $this->backfill($tokenCredentials, 'respiration', $params);
+        $this->backfill($tokenCredentials, 'respiration', $params);
     }
 
     /**

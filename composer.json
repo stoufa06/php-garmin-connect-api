@@ -3,6 +3,7 @@
     "description": "PHP library to connect and use garmin wellness api",
     "type": "library",
     "version": "1.8.1",
+
     "require": {
         "league/oauth1-client": "1.8"
     },

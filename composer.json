@@ -27,5 +27,8 @@
         "platform": {
             "php": "7.1"
         }
+    },
+    "require-dev": {
+        "vlucas/phpdotenv": "^4.2"
     }
 }

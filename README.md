@@ -2,6 +2,7 @@
 - [Table of contents](#table-of-contents)
 - [Description](#description)
 - [Installtion](#installtion)
+- [Example](#example)
 - [Usage](#usage)
   - [Get authorization link](#get-authorization-link)
   - [Get token credentials](#get-token-credentials)
@@ -19,14 +20,13 @@ PHP library to connect and use garmin wellness api
 ```
 composer require stoufa06/php-garmin-connect-api
 ```
+# Example
+
+Please take a look at [examples](./examples/README.md) folder
 # Usage 
 ## Get authorization link
 ```php
 use Stoufa\GarminApi\GarminApi;
-
-/** use this if you are not using utc timezone in your server or your php code **/
-$timezone = date_default_timezone_get(); 
-date_default_timezone_set('UTC');
 
 try
 {
@@ -52,10 +52,6 @@ catch (\Throwable $th)
 {
     // catch your exception here
 }
-finally
-{
-    date_default_timezone_set($timezone);
-}
 
 ```
 ## Get token credentials
@@ -63,10 +59,6 @@ finally
 After the user connects his garmin account successfully it will redirect to callback_uri. "oauth_token" and "oauth_verifier" should be available in $_GET. 
 
 ```php
-/** use this if you are not using utc timezone in your server or your php code **/
-$timezone = date_default_timezone_get(); 
-date_default_timezone_set('UTC');
-
 try
 {
     $config = array(
@@ -87,10 +79,6 @@ try
 catch (\Throwable $th)
 {
     // catch your exception here
-}
-finally
-{
-    date_default_timezone_set($timezone);
 }
 ```
 

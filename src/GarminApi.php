@@ -30,7 +30,7 @@ class GarminApi extends Server
      *
      * @return string
      */
-    public function urlTemporaryCredentials(): string
+    public function urlTemporaryCredentials()
     {
         return self::API_URL . 'oauth-service/oauth/request_token';
     }
@@ -40,7 +40,7 @@ class GarminApi extends Server
      *
      * @return string
      */
-    public function urlAuthorization(): string
+    public function urlAuthorization()
     {
         return 'http://connect.garmin.com/oauthConfirm';
     }
@@ -50,7 +50,7 @@ class GarminApi extends Server
      *
      * @return string
      */
-    public function urlTokenCredentials(): string
+    public function urlTokenCredentials()
     {
         return self::API_URL . 'oauth-service/oauth/access_token';
     }
@@ -62,7 +62,7 @@ class GarminApi extends Server
      * @param TemporaryCredentials|string $temporaryIdentifier
      * @return string
      */
-    public function getAuthorizationUrl($temporaryIdentifier): string
+    public function getAuthorizationUrl($temporaryIdentifier, array $options = [])
     {
         // Somebody can pass through an instance of temporary
         // credentials and we'll extract the identifier from there.
@@ -91,7 +91,7 @@ class GarminApi extends Server
      * @throws GuzzleException
      * @throws InvalidArgumentException
      */
-    public function getTokenCredentials(TemporaryCredentials $temporaryCredentials, string $temporaryIdentifier, string $verifier): TokenCredentials
+    public function getTokenCredentials(TemporaryCredentials $temporaryCredentials, $temporaryIdentifier, $verifier)
     {
         if ($temporaryIdentifier !== $temporaryCredentials->getIdentifier()) {
             throw new \InvalidArgumentException(
@@ -112,7 +112,7 @@ class GarminApi extends Server
                 'form_params' => $bodyParameters
             ]);
         } catch (BadResponseException $e) {
-            throw $this->getCredentialsExceptionForBadResponse($e, 'token credentials');
+            throw $this->handleTokenCredentialsBadResponse($e);
         }
         
         return $this->createTokenCredentials((string)$response->getBody());
@@ -129,7 +129,7 @@ class GarminApi extends Server
      * @param array $bodyParameters
      * @return string
      */
-    protected function protocolHeader(string $method, string $uri, CredentialsInterface $credentials, array $bodyParameters = array()): string
+    protected function protocolHeader($method, $uri, CredentialsInterface $credentials, array $bodyParameters = [])
     {
         $parameters = array_merge(
             $this->baseProtocolParameters(),
@@ -157,7 +157,7 @@ class GarminApi extends Server
      *
      * @see OAuth 1.0 RFC 5849 Section 3.1
      */
-    protected function baseProtocolParameters(): array
+    protected function baseProtocolParameters()
     {
         $dateTime = new DateTime('now', new DateTimeZone('UTC'));
 
@@ -178,7 +178,7 @@ class GarminApi extends Server
      * @return string json response
      * @throws Exception
      */
-    public function getActivitySummary(TokenCredentials $tokenCredentials, array $params): string
+    public function getActivitySummary(TokenCredentials $tokenCredentials, array $params)
     {
         $client = $this->createHttpClient();
         $query = http_build_query($params);
@@ -209,7 +209,7 @@ class GarminApi extends Server
      * @return string json response
      * @throws Exception
      */
-    public function getManuallyActivitySummary(TokenCredentials $tokenCredentials, array $params): string
+    public function getManuallyActivitySummary(TokenCredentials $tokenCredentials, array $params)
     {
         $client = $this->createHttpClient();
         $query = http_build_query($params);
@@ -239,7 +239,7 @@ class GarminApi extends Server
      * @return string json response
      * @throws Exception
      */
-    public function getActivityDetailsSummary(TokenCredentials $tokenCredentials, array $params): string
+    public function getActivityDetailsSummary(TokenCredentials $tokenCredentials, array $params)
     {
         $client = $this->createHttpClient();
         $query = http_build_query($params);
@@ -270,7 +270,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfill(TokenCredentials $tokenCredentials, string $uri, array $params): void
+    public function backfill(TokenCredentials $tokenCredentials, string $uri, array $params)
     {
         $client = $this->createHttpClient();
         $query = http_build_query($params);
@@ -300,7 +300,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfillActivitySummary(TokenCredentials $tokenCredentials, array $params): void
+    public function backfillActivitySummary(TokenCredentials $tokenCredentials, array $params)
     {
         $this->backfill($tokenCredentials, 'activities', $params);
     }
@@ -313,7 +313,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfillDailySummary(TokenCredentials $tokenCredentials, array $params): void
+    public function backfillDailySummary(TokenCredentials $tokenCredentials, array $params)
     {
         $this->backfill($tokenCredentials, 'dailies', $params);
     }
@@ -326,7 +326,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfillEpochSummary(TokenCredentials $tokenCredentials, array $params): void
+    public function backfillEpochSummary(TokenCredentials $tokenCredentials, array $params)
     {
         $this->backfill($tokenCredentials, 'epochs', $params);
     }
@@ -339,7 +339,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfillActivityDetailsSummary(TokenCredentials $tokenCredentials, array $params): void
+    public function backfillActivityDetailsSummary(TokenCredentials $tokenCredentials, array $params)
     {
         $this->backfill($tokenCredentials, 'activityDetails', $params);
     }
@@ -352,7 +352,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfillSleepSummary(TokenCredentials $tokenCredentials, array $params): void
+    public function backfillSleepSummary(TokenCredentials $tokenCredentials, array $params)
     {
         $this->backfill($tokenCredentials, 'sleep', $params);
     }
@@ -365,7 +365,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfillBodyCompositionSummary(TokenCredentials $tokenCredentials, array $params): void
+    public function backfillBodyCompositionSummary(TokenCredentials $tokenCredentials, array $params)
     {
         $this->backfill($tokenCredentials, 'bodyComps', $params);
     }
@@ -379,7 +379,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfillStressDetailsSummary(TokenCredentials $tokenCredentials, array $params): void
+    public function backfillStressDetailsSummary(TokenCredentials $tokenCredentials, array $params)
     {
         $this->backfill($tokenCredentials, 'stressDetails', $params);
     }
@@ -393,7 +393,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfillUserMetricsSummary(TokenCredentials $tokenCredentials, array $params): void
+    public function backfillUserMetricsSummary(TokenCredentials $tokenCredentials, array $params)
     {
         $this->backfill($tokenCredentials, 'userMetrics', $params);
     }
@@ -406,7 +406,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfillPulseOxSummary(TokenCredentials $tokenCredentials, array $params): void
+    public function backfillPulseOxSummary(TokenCredentials $tokenCredentials, array $params)
     {
         $this->backfill($tokenCredentials, 'pulseOx', $params);
     }
@@ -419,7 +419,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function backfillRespirationSummary(TokenCredentials $tokenCredentials, array $params): void
+    public function backfillRespirationSummary(TokenCredentials $tokenCredentials, array $params)
     {
         $this->backfill($tokenCredentials, 'respiration', $params);
     }
@@ -431,7 +431,7 @@ class GarminApi extends Server
      * @return void
      * @throws Exception
      */
-    public function deleteUserAccessToken(TokenCredentials $tokenCredentials): void
+    public function deleteUserAccessToken(TokenCredentials $tokenCredentials)
     {
         $uri = 'user/registration';
         $client = $this->createHttpClient();
@@ -457,7 +457,7 @@ class GarminApi extends Server
      *
      * @return string
      */
-    public function urlUserDetails(): string
+    public function urlUserDetails()
     {
         return self::USER_API_URL . 'user/id';
     }
@@ -469,7 +469,7 @@ class GarminApi extends Server
      * @param TokenCredentials $tokenCredentials
      * @return User
      */
-    public function userDetails($data, TokenCredentials $tokenCredentials): User
+    public function userDetails($data, TokenCredentials $tokenCredentials)
     {
         $user = new User();
 
@@ -500,7 +500,7 @@ class GarminApi extends Server
      * @param TokenCredentials $tokenCredentials
      * @return string return empty string
      */
-    public function userEmail($data, TokenCredentials $tokenCredentials): string
+    public function userEmail($data, TokenCredentials $tokenCredentials)
     {
         return '';
     }
@@ -512,7 +512,7 @@ class GarminApi extends Server
      * @param TokenCredentials $tokenCredentials
      * @return string return empty string
      */
-    public function userScreenName($data, TokenCredentials $tokenCredentials): string
+    public function userScreenName($data, TokenCredentials $tokenCredentials)
     {
         return '';
     }

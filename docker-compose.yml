@@ -1,0 +1,10 @@
+name: garmin-example
+services:
+  garmin-example:
+    image: php:8.2-cli
+    volumes:
+      - ./:/app
+    ports:
+        - 8080:8080
+    working_dir: /app/examples
+    command: php -S 0.0.0.0:8080 

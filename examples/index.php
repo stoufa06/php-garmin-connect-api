@@ -55,7 +55,7 @@ if(isset($_GET['oauth_token'], $_GET['oauth_verifier']) || isset($_SESSION['iden
             'summaryStartTimeInSeconds' => $uploadStartTimeInSeconds, // time in seconds utc
             'summaryEndTimeInSeconds' => $uploadEndTimeInSeconds // time in seconds utc
         ];
-        $server->backfillActivitySummary($tokenCredentials, $params);
+        //$server->backfillActivitySummary($tokenCredentials, $params);
 
         // User id
         $userId = $server->getUserUid($tokenCredentials);
